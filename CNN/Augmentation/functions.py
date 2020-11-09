@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from functools import wraps
+import bbox as B
 import random
 
 def bbox_vflip(bbox, rows, cols):
@@ -158,6 +159,43 @@ def crop(img, x_min, y_min, x_max, y_max):
         )
 
     return img[y_min:y_max, x_min:x_max]
+
+def crop_bbox_by_coords(bbox, crop_coords, crop_height, crop_width, rows, cols):
+    """Crop a bounding box using the provided coordinates of bottom-left and top-right corners in pixels and the
+    required height and width of the crop.
+    Args:
+        bbox (tuple): A cropped box `(x_min, y_min, x_max, y_max)`.
+        crop_coords (tuple): Crop coordinates `(x1, y1, x2, y2)`.
+        crop_height (int):
+        crop_width (int):
+        rows (int): Image rows.
+        cols (int): Image cols.
+    Returns:
+        tuple: A cropped bounding box `(x_min, y_min, x_max, y_max)`.
+    """
+    bbox = B.denormalize_bbox(bbox, rows, cols)
+    x_min, y_min, x_max, y_max = bbox[:4]
+    x1, y1, _, _ = crop_coords
+    cropped_bbox = x_min - x1, y_min - y1, x_max - x1, y_max - y1
+    return B.normalize_bbox(cropped_bbox, crop_height, crop_width)
+
+def bbox_crop(bbox, x_min, y_min, x_max, y_max, rows, cols):
+    """Crop a bounding box.
+    Args:
+        bbox (tuple): A bounding box `(x_min, y_min, x_max, y_max)`.
+        x_min (int):
+        y_min (int):
+        x_max (int):
+        y_max (int):
+        rows (int): Image rows.
+        cols (int): Image cols.
+    Returns:
+        tuple: A cropped bounding box `(x_min, y_min, x_max, y_max)`.
+    """
+    crop_coords = x_min, y_min, x_max, y_max
+    crop_height = y_max - y_min
+    crop_width = x_max - x_min
+    return crop_bbox_by_coords(bbox, crop_coords, crop_height, crop_width, rows, cols)
 
 def brightness(img, low, high):
     value = random.uniform(low, high)
