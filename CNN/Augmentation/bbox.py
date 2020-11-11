@@ -4,12 +4,15 @@ def convert(format, bbox):
         if format == 'coco':
             x_min, y_min, w, h = box[:4]
             box[:4] = int(x_min), int(y_min), int(x_min + w), int(y_min + h)
-        elif format == 'voc':
-            return box
         elif format == 'yolo':
             x, y, w, h = box[:4]
             x_min, y_min, x_max, y_max = int(x - w / 2 + 1), int(y - h / 2 + 1), int(x_min + w), int(y_min + h)
             box[:4] = x_min, y_min, x_max, y_max
+        elif format == 'voc':
+            return box
+        else:
+            raise ValueError("format must be one of coco, yolo, voc")
+
 
 
 # BoundingBox Normalize
@@ -18,7 +21,7 @@ def normalize_bbox(bbox, rows, cols):
     by image height.
     """
     x_min, y_min, x_max, y_max = bbox[:4]
-
+    print(bbox,'bbox3')
     if rows <= 0:
         raise ValueError("Argument rows must be positive integer")
     if cols <= 0:
@@ -27,8 +30,8 @@ def normalize_bbox(bbox, rows, cols):
     x_min, x_max = x_min / cols, x_max / cols
     y_min, y_max = y_min / rows, y_max / rows
 
-    bbox[:4] = x_min, y_min, x_max, y_max
-    return bbox
+    return  x_min, y_min, x_max, y_max
+    # return bbox
 
 
 # Normalize a list of bounding boxes.
@@ -63,8 +66,8 @@ def denormalize_bbox(bbox, rows, cols):
     x_min, x_max = x_min * cols, x_max * cols
     y_min, y_max = y_min * rows, y_max * rows
 
-    bbox[:4] = x_min, y_min, x_max, y_max
-    return bbox
+    return x_min, y_min, x_max, y_max
+    # return bbox
 
 
 # Denormalize a list of bounding boxes.

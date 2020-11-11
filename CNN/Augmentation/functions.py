@@ -173,6 +173,7 @@ def crop_bbox_by_coords(bbox, crop_coords, crop_height, crop_width, rows, cols):
     Returns:
         tuple: A cropped bounding box `(x_min, y_min, x_max, y_max)`.
     """
+    print(bbox, 'crobbox')
     bbox = B.denormalize_bbox(bbox, rows, cols)
     x_min, y_min, x_max, y_max = bbox[:4]
     x1, y1, _, _ = crop_coords
@@ -192,6 +193,7 @@ def bbox_crop(bbox, x_min, y_min, x_max, y_max, rows, cols):
     Returns:
         tuple: A cropped bounding box `(x_min, y_min, x_max, y_max)`.
     """
+    print(bbox,'bbox2')
     crop_coords = x_min, y_min, x_max, y_max
     crop_height = y_max - y_min
     crop_width = x_max - x_min

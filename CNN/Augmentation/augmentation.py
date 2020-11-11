@@ -52,8 +52,6 @@ category_ids = [18, 19]
 # to visualize the class label for the bounding box on the image
 category_id_to_name = {18: 'dog', 19: 'horse'}
 
-
-
 # 밝기
 image_1 = F.brightness(image, 0.5, 3)
 # 수직 접기
@@ -62,31 +60,32 @@ image_2 = F.vertical_flip(image)
 image_3 = F.rotate2(image, 45)
 # albumentation rotate 실행
 image_4 = F.rotate(image, 45, interpolation=cv2.INTER_LINEAR, border_mode=cv2.BORDER_REFLECT_101, value=None)
-rows, cols = image.shape[:2]
 B.convert('coco', bboxes)
-B.normalize_bboxes(bboxes, rows, cols)
+bboxes = B.normalize_bboxes(bboxes, rows, cols)
+print(bboxes,'bbox5')
 bboxes2 = copy.deepcopy(bboxes)
 bboxes3 = copy.deepcopy(bboxes)
 bboxes4 = copy.deepcopy(bboxes)
-for box in bboxes4:
-    box[:4] = F.bbox_crop(bboxes, 100, 100, 500, 500, rows, cols)
-for box in bboxes2:
-    box[:4] = F.bbox_flip(box, 0, rows, cols)
-# bbox 변환
-for bbox in bboxes3:
-    bbox[:4] = F.bbox_rotate(bbox, 45, rows, cols)
-    bbox[:4]= tuple(np.clip(bbox[:4], 0, 1.0))
-B.denormalize_bboxes(bboxes, rows, cols)
-B.denormalize_bboxes(bboxes2, rows, cols)
-B.denormalize_bboxes(bboxes3, rows, cols)
-B.denormalize_bboxes(bboxes4,rows, cols)
-# image_3 = F.rotate_image(image, 45)
 image5 = F.crop(image,100,100,400,400)
+rows, cols = image5.shape[:2]
+for box in bboxes4:
+    box = F.bbox_crop(box, 100, 100, 400, 400, rows, cols)
+    box = tuple(np.clip(box, 0, 1.0))
+# for box in bboxes2:
+#     box[:4] = F.bbox_flip(box, 0, rows, cols)
+# # bbox 변환
+# for bbox in bboxes3:
+#     bbox[:4] = F.bbox_rotate(bbox, 45, rows, cols)
+#     bbox[:4]= tuple(np.clip(bbox[:4], 0, 1.0))
+# B.denormalize_bboxes(bboxes, rows, cols)
+# B.denormalize_bboxes(bboxes2, rows, cols)
+# B.denormalize_bboxes(bboxes3, rows, cols)
+bboxes4 = B.denormalize_bboxes(bboxes4,rows, cols)
+print(bboxes4,'bbox4')
+# image_3 = F.rotate_image(image, 45)
 #화면출력
 # visualize(image_1, bboxes, category_ids, category_id_to_name)
 # visualize(image_2, bboxes2, category_ids, category_id_to_name)
 # visualize(image_3, bboxes3, category_ids, category_id_to_name)
 # visualize(image_4, bboxes3, category_ids, category_id_to_name)
 visualize(image5, bboxes4, category_ids, category_id_to_name)
-
-print(bboxes)
